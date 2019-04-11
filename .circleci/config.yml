@@ -115,7 +115,7 @@ workflows:
             branches:
               only:
                 - develop
-                - devOps #toDo: remove it
+                - devOps #toDo: remove
       - deploy_to_stag:
           requires:
             - build_and_test
