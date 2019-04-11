@@ -1,0 +1,126 @@
+version: 2
+jobs:
+  build_and_test:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:7.10
+
+    working_directory: ~/insuranceFrontend-Kitto
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      # run tests!
+      #- run: npm test
+
+  deploy_to_dev:
+    docker:
+      - image: google/cloud-sdk
+    environment:
+      - PROJECT_NAME: "InsuranceAggregatorFrontEnd"
+      - GOOGLE_PROJECT_ID: "insuranceaggregatorfrontend"
+      - GOOGLE_COMPUTE_ZONE: "us-central1-b"
+      - GOOGLE_CLUSTER_NAME: "kitto-insurance-frontend"
+    steps:
+      - checkout
+      - run:
+          name: Setup Google Cloud SDK
+          command: |
+            apt-get install -qq -y gettext
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+            gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
+      - setup_remote_docker
+      - run:
+          name: Docker build and push
+          command: |
+            gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://eu.gcr.io
+            docker build \
+              --no-cache -f infrastructure/Dockerfile \
+              --build-arg COMMIT_REF=${CIRCLE_SHA1} \
+              --build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
+              -t ${GOOGLE_PROJECT_ID} .
+            docker tag ${GOOGLE_PROJECT_ID} eu.gcr.io/${GOOGLE_PROJECT_ID}/frontendrepo:${CIRCLE_SHA1}
+            docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/frontendrepo:${CIRCLE_SHA1}
+      - run:
+          name: Deploy to Kubernetes
+          command: |
+            envsubst < infrastructure/k8s_dev.yml > ${HOME}/patched_k8s_dev.yml
+            kubectl apply -f ${HOME}/patched_k8s_dev.yml
+            kubectl rollout status deployment/${GOOGLE_PROJECT_ID}-dev
+  deploy_to_stag:
+    docker:
+      - image: google/cloud-sdk
+    environment:
+      - PROJECT_NAME: "InsuranceAggregatorFrontEnd"
+      - GOOGLE_PROJECT_ID: "insuranceaggregatorfrontend"
+      - GOOGLE_COMPUTE_ZONE: "us-central1-b"
+      - GOOGLE_CLUSTER_NAME: "kitto-insurance-frontend"
+
+    steps:
+      - checkout
+      - run:
+          name: Setup Google Cloud SDK
+          command: |
+            apt-get install -qq -y gettext
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+            gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
+      - setup_remote_docker
+      - run:
+          name: Docker build and push
+          command: |
+            gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://eu.gcr.io
+            docker build \
+              --no-cache -f infrastructure/Dockerfile \
+              --build-arg COMMIT_REF=${CIRCLE_SHA1} \
+              --build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
+              --build-arg DATASOURCE_URL=$DATASOURCE_URL \
+              -t ${GOOGLE_PROJECT_ID} .
+            docker tag ${GOOGLE_PROJECT_ID} eu.gcr.io/${GOOGLE_PROJECT_ID}/frontendrepo:${CIRCLE_SHA1}
+            docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/frontendrepo:${CIRCLE_SHA1}
+      - run:
+          name: Deploy to Kubernetes
+          command: |
+            envsubst < infrastructure/k8s_stag.yml > ${HOME}/patched_k8s_stag.yml
+            kubectl apply -f ${HOME}/patched_k8s_stag.yml
+            kubectl rollout status deployment/${GOOGLE_PROJECT_ID}-stag
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - build_and_test
+      - deploy_to_dev:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              only:
+                - develop
+                - devOps #toDo: remove it
+      - deploy_to_stag:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              only:
+                - staging
+                - devOps #toDo: remove it
