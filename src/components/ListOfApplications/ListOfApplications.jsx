@@ -13,7 +13,7 @@ class ModalModalExample extends React.Component {
     open: false,
     data: [],
     currentApp: '',
-    loading: false
+    loading: true
   }
 
   componentDidMount() {
@@ -33,13 +33,11 @@ class ModalModalExample extends React.Component {
         data: resp.data.data,
         loading: false
       })
+      console.log(resp.data.data)
     })
     .catch(err => {
       console.log(err)
     })
-    // this.setState({
-    //   loading: false
-    // })
   }
 
   handleOnOpen = (app) => {

@@ -23,7 +23,7 @@ app.get('/requests', (req, res) => {
     setTimeout(()=>{
         let file_path = path.join(__dirname,'store/data.json')
         let file = JSON.parse(fs.readFileSync(file_path, 'utf-8'))
-        res.send("200 OK")
+        res.send(file)
     }, 2000)
 })
 
