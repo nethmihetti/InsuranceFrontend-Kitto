@@ -1,0 +1,199 @@
+{
+  "data": [
+    {
+      "insurancerequestid": 1,
+      "propertytype": "home1",
+      "amount": 10000,
+      "policystartdate": "2019-04-16",
+      "policyenddate": "2019-04-16",
+      "policycreatedcate": "2019-04-16",
+      "status": "rejected",
+      "address": {
+        "house_num": "1223",
+        "apartment_num": "string",
+        "street": "string",
+        "city": "string",
+        "state": "string",
+        "country": "string"
+      },
+      "user": {
+        "first_name": "Nethmi",
+        "middle_name": "Thileka",
+        "last_name": "Hettiarachchi",
+        "email": "a2222saa@gmafil.com22",
+        "mobile_num": "01311158f9654455",
+        "passport_num": "12w111sf3dErf",
+        "passport_issued_by": "Sri Lanka",
+        "passport_issued_date": "2019-04-13"
+      },
+      "company": {
+        "companyid": 1,
+        "companyname": "ABC Insurance",
+        "address": {
+          "house_num": "No12124",
+          "apartment_num": "Dorm3",
+          "street": "1, Universrity st",
+          "city": "Innopolis",
+          "state": "Tatarstan",
+          "country": "Russia"
+        }
+      }
+    },
+    {
+      "insurancerequestid": 2,
+      "propertytype": "home1",
+      "amount": 10000,
+      "policystartdate": "2019-04-16",
+      "policyenddate": "2019-04-16",
+      "policycreatedcate": "2019-04-16",
+      "status": "accepted",
+      "address": {
+        "house_num": "1223",
+        "apartment_num": "string",
+        "street": "string",
+        "city": "string",
+        "state": "string",
+        "country": "string"
+      },
+      "user": {
+        "first_name": "Nethmi",
+        "middle_name": "Thileka",
+        "last_name": "Hettiarachchi",
+        "email": "a2222saa@gmafil.com22",
+        "mobile_num": "01311158f9654455",
+        "passport_num": "12w111sf3dErf",
+        "passport_issued_by": "Sri Lanka",
+        "passport_issued_date": "2019-04-13"
+      },
+      "company": {
+        "companyid": 1,
+        "companyname": "ABC Insurance",
+        "address": {
+          "house_num": "No12124",
+          "apartment_num": "Dorm3",
+          "street": "1, Universrity st",
+          "city": "Innopolis",
+          "state": "Tatarstan",
+          "country": "Russia"
+        }
+      }
+    },
+    {
+      "insurancerequestid": 3,
+      "propertytype": "home1",
+      "amount": 10000,
+      "policystartdate": "2019-04-16",
+      "policyenddate": "2019-04-16",
+      "policycreatedcate": "2019-04-16",
+      "status": "accepted",
+      "address": {
+        "house_num": "1223",
+        "apartment_num": "string",
+        "street": "string",
+        "city": "string",
+        "state": "string",
+        "country": "string"
+      },
+      "user": {
+        "first_name": "Nethmi",
+        "middle_name": "Thileka",
+        "last_name": "Hettiarachchi",
+        "email": "a2222saa@gmafil.com22",
+        "mobile_num": "01311158f9654455",
+        "passport_num": "12w111sf3dErf",
+        "passport_issued_by": "Sri Lanka",
+        "passport_issued_date": "2019-04-13"
+      },
+      "company": {
+        "companyid": 1,
+        "companyname": "ABC Insurance",
+        "address": {
+          "house_num": "No12124",
+          "apartment_num": "Dorm3",
+          "street": "1, Universrity st",
+          "city": "Innopolis",
+          "state": "Tatarstan",
+          "country": "Russia"
+        }
+      }
+    },
+    {
+      "insurancerequestid": 4,
+      "propertytype": "home1",
+      "amount": 10000,
+      "policystartdate": "2019-04-16",
+      "policyenddate": "2019-04-16",
+      "policycreatedcate": "2019-04-16",
+      "status": "pending",
+      "address": {
+        "house_num": "1223",
+        "apartment_num": "string",
+        "street": "string",
+        "city": "string",
+        "state": "string",
+        "country": "string"
+      },
+      "user": {
+        "first_name": "Nethmi",
+        "middle_name": "Thileka",
+        "last_name": "Hettiarachchi",
+        "email": "a2222saa@gmafil.com22",
+        "mobile_num": "01311158f9654455",
+        "passport_num": "12w111sf3dErf",
+        "passport_issued_by": "Sri Lanka",
+        "passport_issued_date": "2019-04-13"
+      },
+      "company": {
+        "companyid": 1,
+        "companyname": "ABC Insurance",
+        "address": {
+          "house_num": "No12124",
+          "apartment_num": "Dorm3",
+          "street": "1, Universrity st",
+          "city": "Innopolis",
+          "state": "Tatarstan",
+          "country": "Russia"
+        }
+      }
+    },
+    {
+      "insurancerequestid": 5,
+      "propertytype": "home1",
+      "amount": 10000,
+      "policystartdate": "2019-04-16",
+      "policyenddate": "2019-04-16",
+      "policycreatedcate": "2019-04-16",
+      "status": "pending",
+      "address": {
+        "house_num": "1223",
+        "apartment_num": "string",
+        "street": "string",
+        "city": "string",
+        "state": "string",
+        "country": "string"
+      },
+      "user": {
+        "first_name": "Nethmi",
+        "middle_name": "Thileka",
+        "last_name": "Hettiarachchi",
+        "email": "a2222saa@gmafil.com22",
+        "mobile_num": "01311158f9654455",
+        "passport_num": "12w111sf3dErf",
+        "passport_issued_by": "Sri Lanka",
+        "passport_issued_date": "2019-04-13"
+      },
+      "company": {
+        "companyid": 1,
+        "companyname": "ABC Insurance",
+        "address": {
+          "house_num": "No12124",
+          "apartment_num": "Dorm3",
+          "street": "1, Universrity st",
+          "city": "Innopolis",
+          "state": "Tatarstan",
+          "country": "Russia"
+        }
+      }
+    }
+  ]
+}

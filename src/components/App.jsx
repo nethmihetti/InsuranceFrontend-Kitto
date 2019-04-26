@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Grid, Menu, Button, Image } from 'semantic-ui-react'
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
 import ListOfApplications from './ListOfApplications/ListOfApplications'
 import logo from './logo.svg'
 // import { ReactComponent as Logo } from './components/images/logo.svg'
@@ -37,7 +38,7 @@ class App extends Component {
           {/* <Header.Content>Hello</Header.Content> */}
           <ListOfApplications />
         </Grid.Column>
-      </Grid> 
+      </Grid>
     );
   }
 }
