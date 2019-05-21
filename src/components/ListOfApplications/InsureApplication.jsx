@@ -2,6 +2,10 @@ import React from 'react'
 import axios from 'axios'
 import { Button, Modal, Grid } from 'semantic-ui-react'
 import Config from '../../config/Config'
+//////////////
+import { connect } from 'react-redux'
+import { loadRequestsActionCreator } from '../../redux/actions/loadRequests'
+
 
 /** Example of the income data */
 /**
@@ -57,9 +61,19 @@ class InsureApplicationModal extends React.Component {
     accept_loading: false,
     accept_disabled: false
   }
+
+  componentWillReceiveProps() {
+    console.log(this.props)
+    if (this.props.data === "") {
+      console.log("one")
+    } else {
+      console.log("two")
+    }
+  }
+
   
   // close - funciton to close modal
-  newHandleOnReject = (insuranceId, status, close) => {
+  handleOnChangeStatus = (insuranceId, status, close) => {
     if (status === "accepted") {
       this.setState({
         accept_loading: true,
@@ -83,34 +97,54 @@ class InsureApplicationModal extends React.Component {
       }
     })
     .then(resp => {
-      console.log(resp)
+      // this.setState({
+      //   reject_loading: false,
+      //   accept_loading: false
+      // })
       this.setState({
         reject_loading: false,
-        accept_loading: false
+        reject_disabled: false,
+        
+        accept_loading: false,
+        accept_disabled: false
       })
       close()
+      this.props.loadRequests()
     })
     .catch(err => {
       console.log(err)
     })
-    
+    console.log(this.state)
   }
-  
-  checkStatus = (open, data) => {
-    if (open === true) {
-      console.log("happen")
-      if (data.status === "accepted") {
-        this.setState({
-          accept_disabled: true
-        })
-      }
-      if (data.status === "rejected") {
-        this.setState({
-          reject_disabled: true
-        })
-      }
+
+  checkStatus = (data) => {
+    if (data.status === "accepted") {
+      this.setState({
+        accept_disabled: true
+      })
+    }
+    if (data.status === "rejected") {
+      this.setState({
+        reject_disabled: true
+      })
     }
   }
+  
+  // checkStatus = (open, data) => {
+  //   if (open === true) {
+  //     console.log("happen")
+  //     if (data.status === "accepted") {
+  //       this.setState({
+  //         accept_disabled: true
+  //       })
+  //     }
+  //     if (data.status === "rejected") {
+  //       this.setState({
+  //         reject_disabled: true
+  //       })
+  //     }
+  //   }
+  // }
 
   render() {
     const { open, close, data } = this.props
@@ -177,7 +211,7 @@ class InsureApplicationModal extends React.Component {
             content="Reject"
             disabled={this.state.reject_disabled}
             className={this.state.reject_loading? 'loading': ''}
-            onClick={()=>{this.newHandleOnReject(data.insurancerequestid, "rejected", close)}}
+            onClick={()=>{this.handleOnChangeStatus(data.insurancerequestid, "rejected", close)}}
           />
           <Button
             positive
@@ -186,7 +220,7 @@ class InsureApplicationModal extends React.Component {
             content="Accept"
             disabled={this.state.accept_disabled}
             className={this.state.accept_loading? 'loading': ''}
-            onClick={()=>{this.newHandleOnReject(data.insurancerequestid, "accepted", close)}}
+            onClick={()=>{this.handleOnChangeStatus(data.insurancerequestid, "accepted", close)}}
           />
         </Modal.Actions>
       </Modal>
@@ -194,78 +228,18 @@ class InsureApplicationModal extends React.Component {
   }
 }
 
-// const InsureApplicationModal = ({open, close, data, handleOnProof, handleOnReject}) => (
-//   <Modal open={open} onClose={close}>
-//     <Modal.Header>Insurance contract number: {data===''? '' : data.insurancerequestid}</Modal.Header>
-//     <Modal.Content>
-//       <Grid columns={4}>
-//         <Grid.Row>
-//           <Grid.Column>
-//             <p>Type of property:</p>
-//             <p>City:</p>
-//             <p>Street:</p>
-//             <p>House number:</p>
-//             <p>Appartment number:</p>
-//             <p>Cost:</p>
-//             <p>Date start of agreement:</p>
-//             <p>Date end of the agreement:</p>
-//             <p>Date of application:</p>
-//           </Grid.Column>
-//           <Grid.Column>
-//             <p>{data===''? '' : data.propertytype}</p>
-//             <p>{data===''? '' : data.address.city}</p>
-//             <p>{data===''? '' : data.address.street}</p>
-//             <p>{data===''? '' : data.address.house_num}</p>
-//             <p>{data===''? '' : data.address.apartment_num}</p>
-//             <p>{data===''? '' : data.amount}</p>
-//             <p>{data===''? '' : data.policystartdate}</p>
-//             <p>{data===''? '' : data.policyenddate}</p>
-//             <p>{data===''? '' : data.policycreatedcate}</p>
-//           </Grid.Column>
+// export default InsureApplicationModal
 
-//           <Grid.Column>
-//             <p>Name:</p>
-//             <p>Surname:</p>
-//             <p>Last name:</p>
-//             <p>Passport seria:</p>
-//             <p>Passport number:</p>
-//             <p>Passport issue date:</p>
-//             <p>Passport issued by:</p>
-//             <p>Phone nubmer:</p>
-//             <p>Email:</p>
-//           </Grid.Column>
-//           <Grid.Column>
-//             <p>{data===''? '' : data.user.first_name}</p>
-//             <p>{data===''? '' : data.user.middle_name}</p>
-//             <p>{data===''? '' : data.user.last_name}</p>
-//             <p>{data===''? '' : data.user.passport_num}</p>
-//             <p>{data===''? '' : data.user.passport_num}</p>
-//             <p>{data===''? '' : data.user.passport_issued_date}</p>
-//             <p>{data===''? '' : data.user.passport_issued_by}</p>
-//             <p>{data===''? '' : data.user.mobile_num}</p>
-//             <p>{data===''? '' : data.user.email}</p>
-//           </Grid.Column>
-//         </Grid.Row>
-//       </Grid>
-//     </Modal.Content>
 
-//     <Modal.Actions>
-//     <Button
-//         negative
-//         icon="close"
-//         labelPosition="right"
-//         content="Reject"
-//         onClick={()=>{handleOnReject(data.insurancerequestid, "rejected")}}
-//       />
-//       <Button
-//         positive
-//         icon="checkmark"
-//         labelPosition="right"
-//         content="Proof"
-//         onClick={() => {handleOnProof(data.address.street, data.address.house_num, data.insurancerequestid)}}
-//       />
-//     </Modal.Actions>
-//   </Modal>
-// )
+const mapStateToProps = (state) => ({
+  requests: state.requests,
+  loading: state.requestsLoading,
+  loadFailed: state.requestsLoadingFailed
+})
 
-export default InsureApplicationModal
+const mapDispatchToProps = (dispatch) => ({
+  loadRequests: () => dispatch(loadRequestsActionCreator()) 
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(InsureApplicationModal)

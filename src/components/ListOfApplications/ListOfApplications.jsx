@@ -1,43 +1,24 @@
 import React from "react";
 import { List, Segment, Header, Container, Label, Placeholder } from "semantic-ui-react";
+import { connect } from 'react-redux'
 import InsureApplicationModal from './InsureApplication'
-import axios from 'axios'
-import Config from '../../config/Config'
+import { loadRequestsActionCreator } from '../../redux/actions/loadRequests'
 
 
 import './ListOfApplications.css'
 
 
 class ModalModalExample extends React.Component {
+  // !!!
   state = {
     open: false,
-    data: [],
-    currentApp: '',
-    loading: true
+    currentApp: ''
   }
 
   componentDidMount() {
-    if (this.state.data.length < 1) {
-      this.loadApplications()
+    if (this.props.requests.length < 1) {
+      this.props.loadRequests()
     }
-  }
-
-  loadApplications = () => {
-    this.setState({
-      loading: true
-    })
-    let URL = `${Config.Config.ServerURL}/requests`
-    axios.get(URL)
-    .then(resp => {
-      this.setState({
-        data: resp.data.data,
-        loading: false
-      })
-      console.log(resp.data.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
   }
 
   handleOnOpen = (app) => {
@@ -53,39 +34,6 @@ class ModalModalExample extends React.Component {
       currentApp: ''
     })
   }
-
-  // handleOnProof = (street, house_num, id) => {
-  //   let URL = `${Config.Config.ServerURL}/update`
-  //   axios.post(URL, {
-  //       data: {
-  //         "item_type": street,
-  //         "item_desc": house_num,
-  //         "insuranceId": id
-  //       }
-  //   })
-  //   .then(resp => {
-  //     console.log(resp)
-  //   })
-  //   .catch(err => {
-  //     console.log(err)
-  //   })
-  // }
-
-  // rejectRequest = (insuranceId, status) => {
-  //   let URL = `${Config.Config.ServerURL}/update`
-  //   axios.patch(URL, {
-  //     data: {
-  //       "insuranceId": insuranceId,
-  //       "status": status
-  //     }
-  //   })
-  //   .then(resp => {
-  //     console.log(resp)
-  //   })
-  //   .catch(err => {
-  //     console.log(err)
-  //   })
-  // }
 
   placeholder = () => (
     // Array.from(Array(5))
@@ -115,8 +63,7 @@ class ModalModalExample extends React.Component {
           <Header as='h1' style={{paddingTop: '20px'}}>List of insurance applications</Header>
           <Segment className="container">
           <List divided relaxed>
-            {/* {this.state.data.map((app, index) => ( */}
-            {this.state.loading? this.placeholder() : this.state.data.map((app, index) => (
+            {this.props.loading? this.placeholder() : this.props.requests.map((app, index) => (
               <List.Item key={index}>
               <List.Icon name="home" size="large" verticalAlign="middle" />
               <List.Content className="listItems">
@@ -146,15 +93,22 @@ class ModalModalExample extends React.Component {
         <InsureApplicationModal 
           data={this.state.currentApp} 
           open={this.state.open} 
-          close={this.handleOnClose} 
-          // handleOnProof={this.handleOnProof}
-          // handleOnReject={this.rejectRequest}
-          />
+          close={this.handleOnClose} />
       </div>
     )
   }
 }
 
+const mapStateToProps = (state) => ({
+  requests: state.requests,
+  loading: state.requestsLoading,
+  loadFailed: state.requestsLoadingFailed
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  loadRequests: () => dispatch(loadRequestsActionCreator()) 
+})
 
 
-export default ModalModalExample
+export default connect(mapStateToProps, mapDispatchToProps)(ModalModalExample)
+// export default ModalModalExample

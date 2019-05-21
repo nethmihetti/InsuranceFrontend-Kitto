@@ -7,7 +7,7 @@
       "policystartdate": "2019-04-16",
       "policyenddate": "2019-04-16",
       "policycreatedcate": "2019-04-16",
-      "status": "rejected",
+      "status": "accepted",
       "address": {
         "house_num": "1223",
         "apartment_num": "string",
@@ -46,7 +46,7 @@
       "policystartdate": "2019-04-16",
       "policyenddate": "2019-04-16",
       "policycreatedcate": "2019-04-16",
-      "status": "accepted",
+      "status": "rejected",
       "address": {
         "house_num": "1223",
         "apartment_num": "string",
