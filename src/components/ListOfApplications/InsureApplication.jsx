@@ -67,7 +67,8 @@ class InsureApplicationModal extends React.Component {
     let data = this.props.data
     if (data.status === "accepted") {
       this.setState({
-        accept_disabled: true
+        accept_disabled: true,
+        reject_disabled: true
       })
     } else if (data.status === "rejected") {
       this.setState({

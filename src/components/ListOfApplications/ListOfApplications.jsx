@@ -102,8 +102,12 @@ class ModalModalExample extends React.Component {
   }
 }
 
+const sortFunction = (arr) => {
+  return arr.sort((a, b) => b.insurancerequestid - a.insurancerequestid)
+}
+
 const mapStateToProps = (state) => ({
-  requests: state.requests.requests,
+  requests: sortFunction(state.requests.requests),
   loading: state.requests.requestsLoading,
   loadFailed: state.requests.requestsLoadingFailed
 })
