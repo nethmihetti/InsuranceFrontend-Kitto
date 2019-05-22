@@ -28,7 +28,16 @@ class Login extends React.Component {
     event.preventDefault()
     if (this.isFormValid(this.state)) {
       this.setState({errors: [], loading: true})
-      setTimeout(()=>{console.log("Done")}, 1000)
+      setTimeout(()=>{
+        window.user = "User1"
+        this.setState({
+          loading: false
+        })
+      }, 1000)
+
+      localStorage.setItem('user', "12345");
+      this.props.history.push('/')
+      
       // firebase 
       //   .auth()
       //   .signInWithEmailAndPassword(this.state.email, this.state.password)
@@ -80,8 +89,8 @@ class Login extends React.Component {
         className="app"
       > 
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as='h2' color='blue' textAlign='center'>
-            <Icon name="id card" color="blue" />
+          <Header as='h2' color='black' textAlign='center'>
+            <Icon name="id card" color="black" />
             Login
           </Header>
           <Form onSubmit={this.handleSubmit} size='large'>
@@ -108,7 +117,7 @@ class Login extends React.Component {
               className={this.handleInputErrors(errors, 'password')}
               type="password" />
 
-            <Button disabled={loading} className={loading ? 'loading': ''} color="blue" fluid size="large">Submit</Button>
+            <Button disabled={loading} className={loading ? 'loading': ''} fluid size="large">Submit</Button>
             </Segment>
           </Form>
           {errors.length > 0 && (

@@ -1,31 +1,7 @@
-const initialState = {
-    requests: [],
-    requestsLoading: true,
-    requestsLoadingFailed: false
-}
+import { combineReducers } from 'redux'
+import user from './user'
+import requests from './requests'
 
-
-export const reducer = (state=initialState, action) => {
-
-    switch (action.type) {
-        case 'REQUESTS_LIST_LOADING':
-            return state
-
-        case 'REQUESTS_LIST_LOADED':
-            return {
-                requests: action.requests,
-                requestsLoading: false,
-                requestsLoadingFailed: false
-            }
-
-        case 'REQUESTS_LIST_LOAD_FAILED':
-            return {
-                requests: [], 
-                requestsLoading: true,
-                requestsLoadingFailed: true
-            }
-
-        default:
-            return state
-    }
-}
+export default combineReducers({
+  user, requests
+})

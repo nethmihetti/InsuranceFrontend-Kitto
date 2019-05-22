@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import { Button, Modal, Grid } from 'semantic-ui-react'
-import Config from '../../config/Config'
+// import Config from '../../config/Config'
 //////////////
 import { connect } from 'react-redux'
 import { loadRequestsActionCreator } from '../../redux/actions/loadRequests'
@@ -62,18 +62,22 @@ class InsureApplicationModal extends React.Component {
     accept_disabled: false
   }
 
-  componentWillReceiveProps() {
-    console.log(this.props)
-    if (this.props.data === "") {
-      console.log("one")
-    } else {
-      console.log("two")
+
+  componentDidMount() {
+    let data = this.props.data
+    if (data.status === "accepted") {
+      this.setState({
+        accept_disabled: true
+      })
+    } else if (data.status === "rejected") {
+      this.setState({
+        reject_disabled: true
+      })
     }
   }
-
   
-  // close - funciton to close modal
-  handleOnChangeStatus = (insuranceId, status, close) => {
+  // close - funciton to close modal window
+  handleOnChangeStatus = (data, status, close) => {
     if (status === "accepted") {
       this.setState({
         accept_loading: true,
@@ -89,18 +93,32 @@ class InsureApplicationModal extends React.Component {
         reject_disabled: true
       })
     }
-    let URL = `${Config.Config.ServerURL}/update`
-    axios.patch(URL, {
+    // let URL = `${Config.Config.ServerURL}/update`
+    let URL = "http://10.90.137.18:8888/iroha_rest/api/v1.0/items"
+    let item_id = ""+data.address.country
+                  + data.address.state
+                  + data.address.city 
+                  + data.address.street 
+                  + data.address.house_num
+                  + data.address.apartment_num
+
+
+    
+    axios.post(URL, {
       data: {
-        "insuranceId": insuranceId,
-        "status": status
+        "item": {
+        "item_id": item_id,
+        "insurance_expiration_date": data.policyenddate.split('-').reverse().join('-')
+        },
+        "company": "oramitsu",
+        "account": "Marat",
+        "private_key": "9c7574ce40ade726b2fa27ec18174b3cf8368380be891b4099ab64c9f19cf793"
       }
+       
     })
     .then(resp => {
-      // this.setState({
-      //   reject_loading: false,
-      //   accept_loading: false
-      // })
+      console.log(resp)
+
       this.setState({
         reject_loading: false,
         reject_disabled: false,
@@ -108,46 +126,44 @@ class InsureApplicationModal extends React.Component {
         accept_loading: false,
         accept_disabled: false
       })
-      close()
-      this.props.loadRequests()
+      let acceptedURL = `http://35.226.26.159:8080/api/V1/agents/requests?insuranceId=${data.insurancerequestid}&status=ACCEPTED`
+      axios.patch(acceptedURL)
+      .then(resp => {
+        console.log(resp)
+        close()
+        this.props.loadRequests()
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
     })
     .catch(err => {
-      console.log(err)
+      console.log(`Error: ${err}`)
+      console.log("This item already insured")
+      let rejectURL = `http://35.226.26.159:8080/api/V1/agents/requests?insuranceId=${data.insurancerequestid}&status=REJECTED`
+      axios.patch(rejectURL)
+      .then(resp => {
+        console.log(resp)
+        close()
+        this.props.loadRequests()
+      })
+      .catch(err => {
+        console.log(err)
+      })
+      this.setState({
+        reject_loading: false,
+        reject_disabled: false,
+        
+        accept_loading: false,
+        accept_disabled: false
+      })
     })
-    console.log(this.state)
   }
-
-  checkStatus = (data) => {
-    if (data.status === "accepted") {
-      this.setState({
-        accept_disabled: true
-      })
-    }
-    if (data.status === "rejected") {
-      this.setState({
-        reject_disabled: true
-      })
-    }
-  }
-  
-  // checkStatus = (open, data) => {
-  //   if (open === true) {
-  //     console.log("happen")
-  //     if (data.status === "accepted") {
-  //       this.setState({
-  //         accept_disabled: true
-  //       })
-  //     }
-  //     if (data.status === "rejected") {
-  //       this.setState({
-  //         reject_disabled: true
-  //       })
-  //     }
-  //   }
-  // }
 
   render() {
     const { open, close, data } = this.props
+  
     return (
       <Modal open={open} onClose={close}>
         <Modal.Header>Insurance contract number: {data===''? '' : data.insurancerequestid}</Modal.Header>
@@ -211,7 +227,7 @@ class InsureApplicationModal extends React.Component {
             content="Reject"
             disabled={this.state.reject_disabled}
             className={this.state.reject_loading? 'loading': ''}
-            onClick={()=>{this.handleOnChangeStatus(data.insurancerequestid, "rejected", close)}}
+            onClick={()=>{this.handleOnChangeStatus(data, "rejected", close)}}
           />
           <Button
             positive
@@ -220,15 +236,13 @@ class InsureApplicationModal extends React.Component {
             content="Accept"
             disabled={this.state.accept_disabled}
             className={this.state.accept_loading? 'loading': ''}
-            onClick={()=>{this.handleOnChangeStatus(data.insurancerequestid, "accepted", close)}}
+            onClick={()=>{this.handleOnChangeStatus(data, "accepted", close)}}
           />
         </Modal.Actions>
       </Modal>
     )
   }
 }
-
-// export default InsureApplicationModal
 
 
 const mapStateToProps = (state) => ({

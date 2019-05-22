@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
-import { Provider } from 'react-redux'
-import { store } from '../redux/store'
+// import { Provider } from 'react-redux'
+// import { store } from '../redux/store'
 import ListOfApplications from './ListOfApplications/ListOfApplications'
 // import Login from './Auth/Login'
 
@@ -13,7 +13,7 @@ import './App.css'
 class App extends Component {
   render() {
     return (
-      <Provider store={store}>
+      // <Provider store={store}>
         <BrowserRouter>
           <SidePanel>
             <Switch>
@@ -22,7 +22,7 @@ class App extends Component {
             </Switch>
           </SidePanel>
         </BrowserRouter>
-      </Provider>
+      // </Provider>
     );
   }
 }

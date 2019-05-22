@@ -36,9 +36,7 @@ class ModalModalExample extends React.Component {
   }
 
   placeholder = () => (
-    // Array.from(Array(5))
-    // [1, 2, 3, 4, 5].forEach((i, x)=>(
-      [1, 2, 3, 4, 5].map((i, x) => (
+      [1, 2, 3, 4, 5].map((i) => (
       <List.Item key={i}>
         <Placeholder fluid>
           <Placeholder.Header image >
@@ -89,20 +87,25 @@ class ModalModalExample extends React.Component {
           </Segment>
          
         </Container>
+
+        {
+          this.state.open === false ? "" : 
+          <InsureApplicationModal 
+            data={this.state.currentApp} 
+            open={this.state.open} 
+            close={this.handleOnClose} />
+        }
         
-        <InsureApplicationModal 
-          data={this.state.currentApp} 
-          open={this.state.open} 
-          close={this.handleOnClose} />
+
       </div>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
-  requests: state.requests,
-  loading: state.requestsLoading,
-  loadFailed: state.requestsLoadingFailed
+  requests: state.requests.requests,
+  loading: state.requests.requestsLoading,
+  loadFailed: state.requests.requestsLoadingFailed
 })
 
 const mapDispatchToProps = (dispatch) => ({
