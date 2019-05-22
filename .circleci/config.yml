@@ -110,7 +110,6 @@ workflows:
             branches:
               only:
                 - develop
-                - devOps
       - deploy_to_stag:
           requires:
             - build_and_test
