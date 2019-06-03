@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Form, Grid, Header, Message, Segment, Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 // import firebase from '../../config/firebase'
-// import * as axios from 'axios'
+import * as axios from 'axios'
 
 
 class Login extends React.Component {
@@ -27,50 +27,26 @@ class Login extends React.Component {
   handleSubmit = event => {
     event.preventDefault()
     if (this.isFormValid(this.state)) {
-      this.setState({errors: [], loading: true})
-      setTimeout(()=>{
-        window.user = "User1"
+      this.setState({errors: [], loading: true}) 
+      const URL = 'http://35.226.26.159:8080/login'
+      axios.post(URL, {
+        'username': this.state.email,
+        'password': this.state.password
+      })
+      .then(res => {
+        localStorage.setItem('user', res.headers.authorization)
         this.setState({
           loading: false
         })
-      }, 1000)
-
-      localStorage.setItem('user', "12345");
-      this.props.history.push('/')
-      
-      // firebase 
-      //   .auth()
-      //   .signInWithEmailAndPassword(this.state.email, this.state.password)
-      //   .then(signedInUser => {
-      //     console.log(signedInUser)
-      //     console.log(signedInUser.user._lat)
-           
-      //     const JWT = signedInUser.user._lat
-      //     const AuthStr = `Bearer ${JWT}`
-      //     const URL = 'https://sveezy-back.herokuapp.com/api/orgUsers/currentUser'
-          
-      //     axios.get(URL, { headers: { 
-      //       'Authorization': AuthStr, 
-      //       'Api-Version': '1.0',
-      //     }})
-      //       .then(response => {
-      //         console.log(response.data);
-      //       })
-      //       .catch((error) => {
-      //         console.log('error: ' + error);
-      //       });
-
-      //     this.setState({
-      //       loading: false
-      //     })
-      //   })
-      //   .catch(err => {
-      //     console.error(err)
-      //     this.setState({
-      //       errors: this.state.errors.concat(err),
-      //       loading: false
-      //     })
-      //   })
+        this.props.history.push('/')
+      })
+      .catch(err => {
+        console.log(err)
+        this.setState({
+          errors: this.state.errors.concat(err),
+          loading: false
+        })
+      })
     }
   }
 

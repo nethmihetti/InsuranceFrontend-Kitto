@@ -1,4 +1,4 @@
-let production = true
+let production = false
 // module.exports = {
 //     'Config': production ? require('./config.prod.json') : require('./config.dev.json')
 // }

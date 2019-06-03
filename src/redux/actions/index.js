@@ -18,11 +18,17 @@ export const requestsListLoading = () => ({
   type: actionTypes.REQUESTS_LIST_LOADING
 })
 
-export const requestsListLoaded = (requests) => ({
+export const requestsListLoaded = (requests, currentPage, totalPages) => ({
   type: actionTypes.REQUESTS_LIST_LOADED,
-  requests
+  requests,
+  currentPage,
+  totalPages
 })
 
 export const requestsListLoadFailed = () => ({
   type: actionTypes.REQUESTS_LIST_LOAD_FAILED
 })
+
+// export const changeCurrentPage = (page) => ({
+//   type: actionTypes.CHANGE_PAGE_OF_REQUESTS
+// })
