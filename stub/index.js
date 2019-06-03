@@ -1,6 +1,8 @@
 const express = require('express')
 const path = require('path')
+// const url = require('url')
 const fs = require('fs')
+
 
 const app = express()
 
@@ -19,10 +21,38 @@ app.get('/', (req, res) => {
 
 
 app.get('/requests', (req, res) => {
-    //Get data from store
-    setTimeout(()=>{
-        let file_path = path.join(__dirname,'store/data.json')
-        let file = JSON.parse(fs.readFileSync(file_path, 'utf-8'))
+    let file_path = path.join(__dirname,'store/data.json')
+    let file = JSON.parse(fs.readFileSync(file_path, 'utf-8'))
+
+    if (Object.keys(req.query).length < 1) {
+        setTimeout(()=> {
+            res.status(200).json(file)
+        }, 2000)
+    } else {
+        let page = +req.query.page
+        let size = +req.query.size
+
+        let from = (page, size) => page * size
+        let to = (page, size) => page * size + size 
+
+        console.log(`Page = ${page} from ${from(page, size)}`)
+        console.log(`Size = ${size} to ${to(page, size)}`)
+
+        let res_obj = {
+            data: file.data.filter((elem, i) => i >= from(page, size) && i < to(page, size))
+        }
+
+        console.log(res_obj)
+        console.log(res_obj.data.length)
+        res.status(200).json(res_obj)
+    }
+})
+
+app.get('/requests/:page/:size', (req, res) => {
+    setTimeout(()=> {
+        let file_path = path.join(__dirname, 'store/data.json')
+        let file = JSON.parse(fs.readFileSycn(file_path, 'utf-8'))
+        console.log(file)
         res.send(file)
     }, 2000)
 })

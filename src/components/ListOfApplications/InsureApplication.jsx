@@ -7,50 +7,26 @@ import { connect } from 'react-redux'
 import { loadRequestsActionCreator } from '../../redux/actions/loadRequests'
 
 
-/** Example of the income data */
-/**
-const tmp = [
-  {
-    "insurancerequestid": 4388924262558877900,
-    "propertytype": "home1",
-    "amount": 10000,
-    "policystartdate": "2019-04-16",
-    "policyenddate": "2019-04-16",
-    "policycreatedcate": "2019-04-16",
-    "status": "pending",
-    "address": {
-        "house_num": "1223",
-        "apartment_num": "string",
-        "street": "string",
-        "city": "string",
-        "state": "string",
-        "country": "string"
-    },
-    "user": {
-        "first_name": "Nethmi",
-        "middle_name": "Thileka",
-        "last_name": "Hettiarachchi",
-        "email": "a2222saa@gmafil.com22",
-        "mobile_num": "01311158f9654455",
-        "passport_num": "12w111sf3dErf",
-        "passport_issued_by": "Sri Lanka",
-        "passport_issued_date": "2019-04-13"
-    },
-    "company": {
-        "companyid": 1,
-        "companyname": "ABC Insurance",
-        "address": {
-            "house_num": "No12124",
-            "apartment_num": "Dorm3",
-            "street": "1, Universrity st",
-            "city": "Innopolis",
-            "state": "Tatarstan",
-            "country": "Russia"
-        }
-    }
-  },
-]
- */
+const accept_loading = {
+  accept_loading: true,
+  accept_disabled: true,
+  reject_loading: false,
+  reject_disabled: true
+}
+
+const reject_loading = {
+  accept_loading: false,
+  accept_disabled: true,
+  reject_loading: true,
+  reject_disabled: true
+}
+
+const active_buttons = {
+  reject_loading: false,
+  reject_disabled: false,
+  accept_loading: false,
+  accept_disabled: false 
+}
 
 
 class InsureApplicationModal extends React.Component {
@@ -76,23 +52,56 @@ class InsureApplicationModal extends React.Component {
       })
     }
   }
+
+  // TO DO
+  // !Experemental Async/await version
+  // async handleOnChangeStatus(data, status, close) {
+  handleOnChangeStatus = async (data, status, close) => {
+    if (status === "accepted") {
+      this.setState(accept_loading)
+    } else {
+      this.setState(reject_loading)
+    }
+
+    let URL = "http://10.90.137.18:8888/iroha_rest/api/v1.0/items"
+    let item_id = "string"
+    let req_data = {
+      data: {
+        "item": {
+        "item_id": item_id,
+        "insurance_expiration_date": data.policyenddate.split('-').reverse().join('-')
+        },
+        "company": "oramitsu",
+        "account": "Marat",
+        "private_key": "9c7574ce40ade726b2fa27ec18174b3cf8368380be891b4099ab64c9f19cf793"
+      }
+    }
+
+    let acceptedURL = `http://35.226.26.159:8080/api/V1/agents/requests?insuranceId=${data.insurancerequestid}&status=ACCEPTED`
+
+    try {
+      let response1 = await axios.post(URL, req_data)
+      console.log(response1)
+      
+      let response2 = await axios.patch(acceptedURL)
+      console.log(response2)
+
+      close()
+      this.props.loadRequests()
+
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+  // end
   
   // close - funciton to close modal window
   handleOnChangeStatus = (data, status, close) => {
     if (status === "accepted") {
-      this.setState({
-        accept_loading: true,
-        accept_disabled: true,
-        reject_loading: false,
-        reject_disabled: true
-      })
+      this.setState(accept_loading)
     } else {
-      this.setState({
-        accept_loading: false,
-        accept_disabled: true,
-        reject_loading: true,
-        reject_disabled: true
-      })
+      this.setState(reject_loading)
     }
     // let URL = `${Config.Config.ServerURL}/update`
     let URL = "http://10.90.137.18:8888/iroha_rest/api/v1.0/items"
@@ -115,18 +124,11 @@ class InsureApplicationModal extends React.Component {
         "account": "Marat",
         "private_key": "9c7574ce40ade726b2fa27ec18174b3cf8368380be891b4099ab64c9f19cf793"
       }
-       
     })
     .then(resp => {
       console.log(resp)
 
-      this.setState({
-        reject_loading: false,
-        reject_disabled: false,
-        
-        accept_loading: false,
-        accept_disabled: false
-      })
+      this.setState(active_buttons)
       let acceptedURL = `http://35.226.26.159:8080/api/V1/agents/requests?insuranceId=${data.insurancerequestid}&status=ACCEPTED`
       axios.patch(acceptedURL)
       .then(resp => {
@@ -152,13 +154,7 @@ class InsureApplicationModal extends React.Component {
       .catch(err => {
         console.log(err)
       })
-      this.setState({
-        reject_loading: false,
-        reject_disabled: false,
-        
-        accept_loading: false,
-        accept_disabled: false
-      })
+      this.setState(active_buttons)
     })
   }
 
@@ -206,15 +202,15 @@ class InsureApplicationModal extends React.Component {
                 <p>Email:</p>
               </Grid.Column>
               <Grid.Column>
-                <p>{data===''? '' : data.user.first_name}</p>
-                <p>{data===''? '' : data.user.middle_name}</p>
-                <p>{data===''? '' : data.user.last_name}</p>
-                <p>{data===''? '' : data.user.passport_num}</p>
-                <p>{data===''? '' : data.user.passport_num}</p>
-                <p>{data===''? '' : data.user.passport_issued_date}</p>
-                <p>{data===''? '' : data.user.passport_issued_by}</p>
-                <p>{data===''? '' : data.user.mobile_num}</p>
-                <p>{data===''? '' : data.user.email}</p>
+                <p>{data===''? '' : data.client.first_name}</p>
+                <p>{data===''? '' : data.client.middle_name}</p>
+                <p>{data===''? '' : data.client.last_name}</p>
+                <p>{data===''? '' : data.client.passport_num}</p>
+                <p>{data===''? '' : data.client.passport_num}</p>
+                <p>{data===''? '' : data.client.passport_issued_date}</p>
+                <p>{data===''? '' : data.client.passport_issued_by}</p>
+                <p>{data===''? '' : data.client.mobile_num}</p>
+                <p>{data===''? '' : data.client.email}</p>
               </Grid.Column>
             </Grid.Row>
           </Grid>

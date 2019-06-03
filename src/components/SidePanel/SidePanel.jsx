@@ -1,11 +1,20 @@
 import React, { Component } from 'react'
 import { Grid, Menu, Button, Image } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
 import logo from '../logo.svg'
 
 
 class SidePanel extends Component {
+
+  out = () => {
+    localStorage.removeItem('user')
+    console.log(this.props)
+    //this.props.history.push('/login')
+    window.location.href = "./login"
+  }
+
   render() {
     const { children } = this.props
     return (
@@ -32,6 +41,9 @@ class SidePanel extends Component {
                 <Button onClick={this.handleSidebarClickAdd} style={{width: "100%"}}>List of cases</Button>
               </Link>
             </Grid.Row>
+            <Grid.Row centered>
+              <Button onClick={this.out} content="Sign Out"/>
+            </Grid.Row>
           </Grid>
         </Menu>
         <Grid.Column style={{marginLeft: 270, marginRight: 18}}>
@@ -43,4 +55,4 @@ class SidePanel extends Component {
   }
 }
 
-export default SidePanel
+export default withRouter(SidePanel)

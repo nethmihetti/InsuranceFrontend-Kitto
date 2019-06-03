@@ -1,5 +1,5 @@
 import React from "react";
-import { List, Segment, Header, Container, Label, Placeholder } from "semantic-ui-react";
+import { List, Segment, Header, Container, Label, Placeholder, Pagination, Icon } from "semantic-ui-react";
 import { connect } from 'react-redux'
 import InsureApplicationModal from './InsureApplication'
 import { loadRequestsActionCreator } from '../../redux/actions/loadRequests'
@@ -17,7 +17,7 @@ class ModalModalExample extends React.Component {
 
   componentDidMount() {
     if (this.props.requests.length < 1) {
-      this.props.loadRequests()
+      this.props.loadRequests(0, 10)
     }
   }
 
@@ -36,7 +36,7 @@ class ModalModalExample extends React.Component {
   }
 
   placeholder = () => (
-      [1, 2, 3, 4, 5].map((i) => (
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
       <List.Item key={i}>
         <Placeholder fluid>
           <Placeholder.Header image >
@@ -54,11 +54,15 @@ class ModalModalExample extends React.Component {
     })
   }
 
+  handlePaginationChange = (e, {activePage}) => {
+    this.props.loadRequests(activePage-1, 10)
+  }
+
   render() {
     return (
       <div>
         <Container>
-          <Header as='h1' style={{paddingTop: '20px'}}>List of insurance applications</Header>
+          <Header as='h1'>List of insurance applications</Header>
           <Segment className="container">
           <List divided relaxed>
             {this.props.loading? this.placeholder() : this.props.requests.map((app, index) => (
@@ -85,9 +89,18 @@ class ModalModalExample extends React.Component {
             ))}
           </List>
           </Segment>
-         
+          <Pagination
+            defaultActivePage={this.props.currentPage+1}
+            siblingRange={2}
+            ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
+            firstItem={{ content: <Icon name='angle double left' />, icon: true }}
+            lastItem={{ content: <Icon name='angle double right' />, icon: true }}
+            prevItem={{ content: <Icon name='angle left' />, icon: true }}
+            nextItem={{ content: <Icon name='angle right' />, icon: true }}
+            totalPages={this.props.totalPages}
+            onPageChange={this.handlePaginationChange}
+          />
         </Container>
-
         {
           this.state.open === false ? "" : 
           <InsureApplicationModal 
@@ -95,27 +108,28 @@ class ModalModalExample extends React.Component {
             open={this.state.open} 
             close={this.handleOnClose} />
         }
-        
-
       </div>
     )
   }
 }
 
+// StopGap TO DO: make sorting on API side
 const sortFunction = (arr) => {
   return arr.sort((a, b) => b.insurancerequestid - a.insurancerequestid)
 }
 
 const mapStateToProps = (state) => ({
   requests: sortFunction(state.requests.requests),
+  currentPage: state.requests.currentPage,
+  totalPages: state.requests.totalPages,
   loading: state.requests.requestsLoading,
   loadFailed: state.requests.requestsLoadingFailed
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  loadRequests: () => dispatch(loadRequestsActionCreator()) 
+  loadRequests: (page, size) => dispatch(loadRequestsActionCreator(page, size)) 
 })
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(ModalModalExample)
-// export default ModalModalExample
+
